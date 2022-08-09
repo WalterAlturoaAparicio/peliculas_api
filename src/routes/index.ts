@@ -1,0 +1,1 @@
+export * as characterRouter from "./character.route";
