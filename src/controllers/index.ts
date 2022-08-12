@@ -1,3 +1,2 @@
-export * as characterController from "./character.controller"
-// export * as movieController from "./movie.controller"
-//export * as genreController from "./genre.controller"
+export * as CharacterController from "./character.controller";
+export * as AuthController from "./auth.controller";

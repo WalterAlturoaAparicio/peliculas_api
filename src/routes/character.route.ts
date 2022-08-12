@@ -1,12 +1,12 @@
 import express from "express";
-import { characterController } from "../controllers";
+import { CharacterController } from "../controllers";
 
 const router = express.Router();
 
-router.get("/", characterController.getCharacter);
-router.post("/", characterController.createCharacter);
-router.put("/:id", characterController.editCharacter);
-router.delete("/:id", characterController.deleteCharacter);
-router.get("/detail/:id", characterController.getCharacterDetail);
+router.get("/", CharacterController.getCharacters);
+router.post("/", CharacterController.createCharacter);
+router.put("/:id", CharacterController.editCharacter);
+router.delete("/:id", CharacterController.deleteCharacter);
+router.get("/detail/:id", CharacterController.getCharacterDetail);
 
-export { router };
+export default router;
