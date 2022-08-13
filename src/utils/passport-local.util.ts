@@ -18,12 +18,10 @@ passport.use(
     UserModel.default.findOne({ displayName }, (err: any, user: any) => {
       if (err) return done(err);
       if (!user) {
-        console.log("Usuario no encontrado");
-        return done(null, false, {message: "usuario no econtrado"});
+        return done(new Error("Usuario no encontrado"), false);
       }
       if (!isValidPassword(user, password)) {
-        console.log("contrasenia invalida!");
-        return done(null, false);
+        return done(new Error("contrasenia invalida!"), false);
       }
       return done(null, user);
     });
@@ -40,10 +38,10 @@ passport.use(
       passReqToCallback: true,
     },
     (req, displayName, password, done) => {
-      const { body } = req;
+      const { email } = req.body;
       UserModel.default.findOne(
         {
-          $or: [{ displayName }, { email: body.email }],
+          $or: [{ displayName }, { email }],
         },
         (err: any, user: any) => {
           if (err) {
@@ -56,7 +54,7 @@ passport.use(
           const newUser = {
             displayName,
             password: createHash(password),
-            email: body.email,
+            email,
           };
 
           UserModel.default.create(newUser, (err, user) => {

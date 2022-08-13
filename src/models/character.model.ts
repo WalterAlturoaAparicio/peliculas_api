@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { db } from "../db/config";
-import { movie } from "./movie.model";
+import { movieDetail } from "./movie.model";
 
 export interface characterDetail {
   id: number;
@@ -9,7 +9,7 @@ export interface characterDetail {
   edad?: number;
   peso?: number;
   historia?: string;
-  peliculas?: movie[];
+  peliculas?: movieDetail[];
 }
 export type characterInput = Pick<characterDetail, "nombre" | "imagen">;
 

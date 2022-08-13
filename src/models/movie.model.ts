@@ -1,6 +1,6 @@
 import Character, { characterDetail } from "./character.model";
 import { genre } from "./genre.model";
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { db } from "../db/config";
 
 export interface movieDetail {
@@ -13,11 +13,7 @@ export interface movieDetail {
   genero?: genre[];
 }
 
-export type movie = Pick<movieDetail, "titulo" | "imagen" | "fecha_creacion">;
-
-export interface movieOutput extends Required<movieDetail> {}
-export interface movieInput
-  extends Optional<movie, "imagen" | "fecha_creacion"> {}
+export type movieInput = Pick<movieDetail, "titulo" | "imagen" | "fecha_creacion">;
 
 class Movie extends Model<movieDetail, movieInput> implements movieDetail {
   id!: number;

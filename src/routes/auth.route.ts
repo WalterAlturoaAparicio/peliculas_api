@@ -7,7 +7,8 @@ const router = express.Router();
 router.post(
   "/login",
   passport.authenticate("login"),
-  AuthController.postLogin
+  AuthController.postLogin,
+  AuthController.failLogin
 );
 
 router.post(
