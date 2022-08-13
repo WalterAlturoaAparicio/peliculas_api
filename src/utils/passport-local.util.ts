@@ -41,7 +41,7 @@ passport.use(
     },
     (req, displayName, password, done) => {
       const { body } = req;
-      UserModel.default.findOne({},
+      UserModel.default.findOne(
         {
           $or: [{ displayName }, { email: body.email }],
         },

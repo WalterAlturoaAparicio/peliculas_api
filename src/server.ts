@@ -8,12 +8,13 @@ import { db } from "./db/config";
 import passport from "./utils/passport-local.util";
 import sessionMiddleware from "./middlewares/session.middleware";
 import "./db/dbMongo";
+import { checkAuthentication } from './middlewares/auth.middleware';
 
 class Server {
   private app: Application;
   private port: string;
   private apiPaths = {
-    auth: "/",
+    auth: "/auth",
     characters: "/characters",
     movies: "/movies",
   };
@@ -40,9 +41,11 @@ class Server {
 
   routes() {
     this.app.use(this.apiPaths.auth, AuthRouter.default);
-
-    this.app.use(this.apiPaths.movies, sessionMiddleware, MovieRouter.default);
-    this.app.use(this.apiPaths.characters, CharacterRouter.default);
+    this.app.use(this.apiPaths.movies, checkAuthentication, MovieRouter.default);
+    this.app.use(this.apiPaths.characters, checkAuthentication, CharacterRouter.default);
+    this.app.use('*', (_req, res)=>{
+      res.status(404).json({message: "La pagina que busca no se encuentra disponible!"})
+    })
   }
   async dbConnection() {
     try {

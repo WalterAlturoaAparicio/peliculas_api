@@ -1,17 +1,17 @@
-import { DataTypes, Optional, Model } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { db } from "../db/config";
-import { genre } from "./genre.model";
 import { movie } from "./movie.model";
 
-export interface characterDetail extends genre {
+export interface characterDetail {
+  id: number;
+  nombre: string;
+  imagen?: string;
   edad?: number;
   peso?: number;
   historia?: string;
+  peliculas?: movie[];
 }
-export type character = Pick<characterDetail, "nombre" | "imagen">;
-
-export interface characterInput extends Optional<character, "imagen"> {}
-export interface characterOutput extends Required<characterDetail> {}
+export type characterInput = Pick<characterDetail, "nombre" | "imagen">;
 
 class Character
   extends Model<characterDetail, characterInput>
@@ -23,12 +23,11 @@ class Character
   edad?: number;
   peso?: number;
   historia?: string;
-  peliculas?: movie[];
 }
 Character.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -36,7 +35,7 @@ Character.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    edad: DataTypes.NUMBER,
+    edad:   DataTypes.NUMBER,
     peso: DataTypes.NUMBER,
     imagen: DataTypes.STRING,
     historia: DataTypes.TEXT,
@@ -48,4 +47,5 @@ Character.init(
     modelName: 'personaje'
   }
 );
+
 export default Character;

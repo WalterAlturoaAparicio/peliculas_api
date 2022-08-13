@@ -11,7 +11,7 @@ router.post(
 );
 
 router.post(
-  "/signup",
+  "/register",
   passport.authenticate("signup"),
   AuthController.postSignup
 );

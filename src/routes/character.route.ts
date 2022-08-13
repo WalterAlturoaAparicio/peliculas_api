@@ -3,10 +3,9 @@ import { CharacterController } from "../controllers";
 
 const router = express.Router();
 
-router.get("/", CharacterController.getCharacters);
+router.get("/:id?", CharacterController.getCharacter);
 router.post("/", CharacterController.createCharacter);
 router.put("/:id", CharacterController.editCharacter);
 router.delete("/:id", CharacterController.deleteCharacter);
-router.get("/detail/:id", CharacterController.getCharacterDetail);
 
 export default router;
