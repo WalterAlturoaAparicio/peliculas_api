@@ -48,7 +48,7 @@ passport.use(
             return done(err);
           }
           if (user) {
-            return done(null, false);
+            return done(new Error("El usuario ya existe!"), false);
           }
 
           const newUser = {

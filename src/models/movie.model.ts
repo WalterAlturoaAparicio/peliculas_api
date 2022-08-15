@@ -1,5 +1,5 @@
-import Character, { characterDetail } from "./character.model";
-import { genre } from "./genre.model";
+import Character from "./character.model";
+// import { genre } from "./genre.model";
 import { DataTypes, Model } from "sequelize";
 import { db } from "../db/config";
 
@@ -9,8 +9,8 @@ export interface movieDetail {
   imagen?: string;
   fecha_creacion?: string;
   calificacion?: number;
-  personajes?: characterDetail[];
-  genero?: genre[];
+  personajes?: number[];
+  genero?: number[];
 }
 
 export type movieInput = Pick<movieDetail, "titulo" | "imagen" | "fecha_creacion">;
@@ -21,8 +21,6 @@ class Movie extends Model<movieDetail, movieInput> implements movieDetail {
   imagen?: string;
   fecha_creacion?: string;
   calificacion?: number;
-  personajes?: characterDetail[];
-  genero?: genre[];
 }
 Movie.init({
   id: {
@@ -44,6 +42,6 @@ Movie.init({
   tableName: 'pelicula',
   modelName: 'pelicula'
 })
-Character.belongsToMany(Movie, {through: "pelicula_personaje"})
-Movie.belongsToMany(Character, {through: "pelicula_personaje"})
+Character.belongsToMany(Movie, {through: "pelicula_personaje", as: "peliculas", foreignKey: "id_pelicula"})
+Movie.belongsToMany(Character, {through: "pelicula_personaje", as: "personajes", foreignKey: "id_personaje"})
 export default Movie;

@@ -8,13 +8,14 @@ router.post(
   "/login",
   passport.authenticate("login"),
   AuthController.postLogin,
-  AuthController.failLogin
+  AuthController.failMiddleware
 );
 
 router.post(
   "/register",
   passport.authenticate("signup"),
-  AuthController.postSignup
+  AuthController.postSignup,
+  AuthController.failMiddleware
 );
 
 router.get("/logout", AuthController.logout);

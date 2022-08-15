@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { db } from "../db/config";
-import { movieDetail } from "./movie.model";
+// import { movieDetail } from "./movie.model";
+import Movie from "./movie.model";
 
 export interface characterDetail {
   id: number;
@@ -9,9 +10,14 @@ export interface characterDetail {
   edad?: number;
   peso?: number;
   historia?: string;
-  peliculas?: movieDetail[];
+  peliculasIds?: number[];
+  peliculas?: Movie[];
 }
-export type characterInput = Pick<characterDetail, "nombre" | "imagen">;
+export type characterInput = Omit<characterDetail, "id">;
+export type characterFilter = Pick<characterDetail, "edad" | "peso"> & {
+  nombre?: string;
+  idPelicula?: number;
+};
 
 class Character
   extends Model<characterDetail, characterInput>
@@ -23,6 +29,7 @@ class Character
   edad?: number;
   peso?: number;
   historia?: string;
+  peliculas?: Movie[];
 }
 Character.init(
   {
@@ -35,7 +42,7 @@ Character.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    edad:   DataTypes.NUMBER,
+    edad: DataTypes.NUMBER,
     peso: DataTypes.NUMBER,
     imagen: DataTypes.STRING,
     historia: DataTypes.TEXT,
@@ -43,8 +50,8 @@ Character.init(
   {
     timestamps: false,
     sequelize: db,
-    tableName: 'personaje',
-    modelName: 'personaje'
+    tableName: "personaje",
+    modelName: "personaje",
   }
 );
 

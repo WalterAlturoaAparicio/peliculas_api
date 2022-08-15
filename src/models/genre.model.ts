@@ -1,12 +1,12 @@
 import { DataTypes } from 'sequelize'
 import { db } from '../db/config';
-import { movieDetail } from './movie.model';
+// import { movieDetail } from './movie.model';
 
 export interface genre {
   id: number;
   imagen?: string;
   nombre: string;
-  peliculas?: movieDetail[] | undefined;
+  peliculas?: number[] | undefined;
 };
 
 const Genre = db.define('Genero', {

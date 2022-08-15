@@ -16,7 +16,7 @@ export function logout(req: Request, res: Response, next: NextFunction) {
   });
   res.status(200).json({ message: "Logout!" });
 }
-export function failLogin(
+export function failMiddleware(
   err: Error | any,
   _req: Request,
   res: Response,
