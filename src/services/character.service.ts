@@ -1,61 +1,67 @@
-import Character, {
+import {
+  Character,
   characterInput,
   characterDetail,
   characterFilter,
+  characterOutput,
+  // characterOutput,
 } from "../models/character.model";
 import { errorService } from "./error.service";
-import Movie from "../models/movie.model";
+import { Movie } from "../models/movie.model";
 import { Op } from "sequelize";
-import { MovieService } from ".";
 
+function convertIntoCharacter(character: Character | null): characterDetail {
+  if (character === null) throw new Error("No se encontro el personaje");
+  const { id, nombre, edad, peso, historia, peliculas } = character;
+  return { id, nombre, edad, peso, historia, peliculas };
+}
+
+function filtersCharacter(query?: characterFilter) {
+  if (!query) return [];
+  if (Object.values(query).length === 0) return [];
+
+  const filters: characterFilter & { "$peliculas.id$"?: number } = {};
+
+  if (query.nombre) filters.nombre = query.nombre;
+  if (query.edad) filters.edad = query.edad;
+  if (query.peso) filters.peso = query.peso;
+  if (query.idPelicula) filters["$peliculas.id$"] = query.idPelicula;
+
+  if (Object.values(filters).length === 0)
+    throw new Error("Propiedad no reconocible");
+
+  return filters;
+}
 export async function getCharacters(
   query?: characterFilter
-): Promise<characterInput[] | undefined> {
-  if (query) {
-    const characters = await Character.findAll({
+): Promise<characterOutput[] | undefined> {
+  let characters: characterOutput[] = [];
+  const filters = filtersCharacter(query);
+  if (Object.values(filters).length !== 0) {
+    characters = await Character.findAll({
       where: {
-        [Op.or]: [
-          query.nombre ? { nombre: query.nombre } : {},
-          query.edad ? { edad: query.edad } : {},
-          query.peso ? { peso: query.peso } : {},
-          query.idPelicula ? { "$peliculas.id$": query.idPelicula } : {},
-        ],
+        [Op.or]: [filters],
       },
-      include: [
-        {
-          model: Movie,
-          as: "peliculas",
-          attributes: ["id", "titulo", "imagen"],
-          through: {
-            attributes: [],
-          },
-          required: false,
-        },
-      ],
-    });
-    return characters.map(({ nombre, imagen, peliculas }) => {
-      return { nombre, imagen, peliculas };
+      include: { model: Movie, as: "peliculas", attributes: ["id"], required:false },
+      order: [["nombre", "ASC"]],
     });
   } else {
-    const characters = await Character.findAll();
-    return characters.map(({ nombre, imagen }) => {
-      return { nombre, imagen };
-    });
+    characters = await Character.findAll({ order: [["nombre", "ASC"]] });
   }
+  return characters.map(({ nombre, imagen }) => {
+    return { nombre, imagen };
+  });
 }
 
 export async function createCharacter(
   payload: characterInput
 ): Promise<characterDetail> {
   const { peliculasIds, ...all } = payload;
-  if (peliculasIds) {
-    const pelis = await MovieService.getFilterMovies(payload.peliculasIds);
-    const character = await Character.create({...all});
-    character.peliculas = pelis;
-    await character.save();
-    return convertIntoCharacter(character);
-  }
-  const character = await Character.create(payload);
+
+  const character = await Character.create(all);
+  if (peliculasIds && peliculasIds.length !== 0)
+    await character.$add("peliculas", peliculasIds);
+
   return convertIntoCharacter(character);
 }
 
@@ -79,11 +85,6 @@ export async function getById(_id: number): Promise<characterDetail> {
     throw errorService(error);
   }
 }
-function convertIntoCharacter(character: Character | null): characterDetail {
-  if (character === null) throw new Error("No se encontro el personaje");
-  const { id, nombre, imagen, edad, peso, historia, peliculas } = character;
-  return { id, nombre, imagen, edad, peso, historia, peliculas };
-}
 
 export async function editCharacter(
   id: number,
@@ -93,7 +94,11 @@ export async function editCharacter(
     const character = await Character.findByPk(id);
     convertIntoCharacter(character);
     const { peliculasIds, ...all } = payload;
-    const updatedCharacter = await (character as Character).update({...all});
+    const updatedCharacter = await (character as Character).update(all);
+
+    if (peliculasIds && peliculasIds.length !== 0)
+      await updatedCharacter.$set("peliculas", peliculasIds);
+
     return convertIntoCharacter(updatedCharacter);
   } catch (error) {
     throw errorService(error);

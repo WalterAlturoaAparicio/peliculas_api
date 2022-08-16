@@ -4,7 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import { CharacterRouter, MovieRouter, AuthRouter } from "./routes";
-import { db } from "./db/config";
+import { db } from "./db/sequelize";
 import passport from "./utils/passport-local.util";
 import sessionMiddleware from "./middlewares/session.middleware";
 import "./db/dbMongo";

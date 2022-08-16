@@ -4,9 +4,10 @@ import { errorController } from "./error.controller";
 
 export async function getMovie(req: Request, res: Response) {
   const { id } = req.params;
+  const query = Object.entries(req.query).length !== 0 ? req.query : undefined;
   try {
     if (!id) {
-      const movies = await MovieService.getMovies();
+      const movies = await MovieService.getMovies(query);
       return res.status(200).json({ data: movies });
     }
     const movie = await MovieService.getById(+id);

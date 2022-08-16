@@ -1,16 +1,38 @@
-import { DataTypes } from 'sequelize'
-import { db } from '../db/config';
-// import { movieDetail } from './movie.model';
+import {
+  AutoIncrement,
+  BelongsToMany,
+  Column,
+  Model,
+  PrimaryKey,
+  Table,
+} from "sequelize-typescript";
+import { GenreMovie } from "./genreMovie.model";
+import { Movie } from "./movie.model";
 
 export interface genre {
   id: number;
-  imagen?: string;
   nombre: string;
-  peliculas?: number[] | undefined;
-};
+  imagen?: string;
+  peliculasIds?: number[];
+}
 
-const Genre = db.define('Genero', {
-  nombre: DataTypes.STRING,
-  imagen: DataTypes.STRING,
+@Table({
+  tableName: "genero",
+  modelName: "genero",
+  timestamps: false,
 })
-export default Genre;
+export class Genre extends Model<genre> implements genre {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column
+  nombre!: string;
+
+  @Column
+  imagen?: string;
+
+  @BelongsToMany(() => Movie, () => GenreMovie)
+  peliculas?: Movie[];
+}
