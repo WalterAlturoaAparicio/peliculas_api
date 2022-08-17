@@ -1,13 +1,16 @@
 import { NextFunction, Request, Response } from "express";
+import mailService from "../services/mail.service";
 
 export function postLogin(req: Request, res: Response) {
   const user = req.user;
   res.status(202).json({ user });
 }
 
-export function postSignup(req: Request, res: Response) {
+export async function postSignup(req: Request, res: Response) {
   const user = req.user;
-  res.status(201).json({ user });
+  mailService(req.body.email);
+  return res.status(201).json({ user });
+  
 }
 
 export function logout(req: Request, res: Response, next: NextFunction) {
